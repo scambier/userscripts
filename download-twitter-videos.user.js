@@ -1,9 +1,8 @@
 // ==UserScript==
-// @name         Twitter Video Download
-// @namespace    scambier
+// @name         Dowload Twitter Videos
+// @namespace    https://github.com/scambier/userscripts
 // @author       Simon Cambier
-// @version      0.2
-// @homepage     https://github.com/scambier/userscripts
+// @version      0.3
 // @description  Adds a download button to quickly download gifs and videos embedded in tweets
 // @license      ISC
 // @match        https://twitter.com/*
@@ -12,7 +11,6 @@
 // @match        https://www.savetweetvid.com/?url=*
 // @grant        none
 // @run-at       document-idle
-// @require      https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/js/all.js
 // ==/UserScript==
 
 (function () {
@@ -35,10 +33,13 @@
       left: 7px;
       font-size: 1em;
       background-color: #14171A;
-      padding: 2px 4px;
+      padding: 2px 2px 0 3px;
       border-radius: 2px;
       opacity: 0;
       transition: 0.2s;
+    }
+    .dtm-link img {
+      border: none;
     }
     .dtm-link:visited {
       color: white;
@@ -102,8 +103,8 @@
           videoContainer.appendChild(link)
 
           // Add the download icon
-          const icon = document.createElement('i')
-          icon.className = 'fas fa-download'
+          const icon = document.createElement('img')
+          icon.setAttribute('src', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABhUlEQVQ4ja2UvWpUURSFvz0MQUKYYoiCU0qUFCIiqUVSTOETWOUxLHyD1FMFGzufwFLyAlNIggg+gPgHwWCISXB9FrlXruNMIpJzinvhnP2x9l7r3hK5itW/8FTWgGsA6sfq1dcL7s7fSVbUXfWtuq8+W3RXXKyoqpbVe8CwqgBu/39rrWrP51jUwju9yyCNmkvXn4pkGdhUh8igqpbUFrZm3Gre94A9inRqO1tHSXbVI/VYNYlJVM/UoyTf1Kdqv1s7z6376rsupAP7qU6SDGfr/jZSe+q4hbXABvIyyeo8++en4hz2IMl+wzpplNxYlKNKMgK2qupmx+5U1WvgVN2uqjfqpKoeA9c79nwCXlB8IMk4ycnsTNQvSZ6od9WNJK/Us+bMjtJxm+w+sNRmprVbXa2qHWAKjKpqHTgEPgO3gPfAnTZCvS5gThAHwCaw3rQ8rarnwA9g0jx/z+NRkoOZtrpuzdrf5utYPVAftsMeABvAyr9+Do0Aquo7MKU4rKv6sf0CJZXR6U2U6EQAAAAASUVORK5CYII=')
           link.appendChild(icon)
 
           const videoSrc = video.getAttribute('src')
