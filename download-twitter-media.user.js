@@ -1,9 +1,11 @@
 // ==UserScript==
 // @name         Twitter Video Download
-// @namespace    https://github.com/scambier/userscripts
-// @version      0.2
-// @description  Adds a download button to quickly download gifs and videos embedded in tweets
+// @namespace    scambier
 // @author       Simon Cambier
+// @version      0.2
+// @homepage     https://github.com/scambier/userscripts
+// @description  Adds a download button to quickly download gifs and videos embedded in tweets
+// @license      ISC
 // @match        https://twitter.com/*
 // @match        https://twdownload.com/?url=*
 // @match        http://twittervideodownloader.com/?url=*
