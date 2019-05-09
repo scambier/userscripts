@@ -20,7 +20,7 @@
 
   interface IMediaBlock {
     container: Element,
-    src: string
+    src?: string
   }
 
   // Do not reexecute script when Twitter location changes
@@ -31,7 +31,15 @@
   //#region JQuery events
 
   $(document).on('click', '[data-download-media]', function (e) {
-    window.open($(this).attr('data-download-media'))
+    let mediaUrl = $(this).attr('data-download-media')!
+    let tweetUrl = $(this).attr('data-tweet-url')!
+
+    if (mediaUrl.startsWith('blob:')) {
+      // If it's a blob video, redirect to twdownload.com
+      mediaUrl = getRandomItem(externalDomains) + tweetUrl
+    }
+
+    window.open(mediaUrl)
     e.stopPropagation()
   })
 
@@ -40,9 +48,7 @@
       const article: JQuery<HTMLElement> = $(this).closest('article')
       const url = article.attr('data-media-download')
       const actions = article.find('.js-dropdown-content ul')
-      console.log(actions.find('[data-media-download]').length)
       if (url && !actions.find('[data-media-download]').length) {
-        console.log('ok')
         actions.append('<li class="is-selectable" data-media-download><a href="#" data-action="embed">LOL</a></li>')
       }
     }, 100)
@@ -94,34 +100,24 @@
   }
 
   function addButtonOverVideo(video: IMediaBlock) {
-    let tweetUrl = ''
-    if (location.hostname === 'twitter.com') {
-      tweetUrl = getTweetUrlTwitter(video.container)
-    }
-    else if (location.hostname === 'tweetdeck.twitter.com') {
-      tweetUrl = getTweetUrlTweetDeck(video.container)
-    }
+    // Make sure that the link exists
+    if (!video.src) return
 
     video.container.setAttribute('style', 'position: relative;')
 
     // Create the button (not a real button, just a link)
     const link = document.createElement('a')
     link.className = 'dtm-link'
-    video.container.appendChild(link)
-
+    
     // Add the download icon
     const icon = document.createElement('img')
     icon.setAttribute('src', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABhUlEQVQ4ja2UvWpUURSFvz0MQUKYYoiCU0qUFCIiqUVSTOETWOUxLHyD1FMFGzufwFLyAlNIggg+gPgHwWCISXB9FrlXruNMIpJzinvhnP2x9l7r3hK5itW/8FTWgGsA6sfq1dcL7s7fSVbUXfWtuq8+W3RXXKyoqpbVe8CwqgBu/39rrWrP51jUwju9yyCNmkvXn4pkGdhUh8igqpbUFrZm3Gre94A9inRqO1tHSXbVI/VYNYlJVM/UoyTf1Kdqv1s7z6376rsupAP7qU6SDGfr/jZSe+q4hbXABvIyyeo8++en4hz2IMl+wzpplNxYlKNKMgK2qupmx+5U1WvgVN2uqjfqpKoeA9c79nwCXlB8IMk4ycnsTNQvSZ6od9WNJK/Us+bMjtJxm+w+sNRmprVbXa2qHWAKjKpqHTgEPgO3gPfAnTZCvS5gThAHwCaw3rQ8rarnwA9g0jx/z+NRkoOZtrpuzdrf5utYPVAftsMeABvAyr9+Do0Aquo7MKU4rKv6sf0CJZXR6U2U6EQAAAAASUVORK5CYII=')
-    link.appendChild(icon)
 
-    if (video.src.includes('blob:')) {
-      // If it's a blob video, redirect to twdownload.com
-      link.setAttribute('data-download-media', getRandomItem(externalDomains) + tweetUrl)
-    }
-    else {
-      // If it's a gif, we can open the file
-      link.setAttribute('data-download-media', video.src)
-    }
+    link.setAttribute('data-download-media', video.src)
+    link.setAttribute('data-tweet-url', getTweetUrlTwitter(video.container))
+
+    link.appendChild(icon)
+    video.container.appendChild(link)
   }
 
   function getVideosTwitter() {
@@ -258,6 +254,7 @@
     if (isTweetdeck()) {
       const videos = getVideosTweetdeck()
       for (const video of videos) {
+        if (!video.src) continue
         video.container.setAttribute('data-media-download', video.src)
       }
     }
@@ -268,7 +265,7 @@
       main()
     }, 500)
   }
-  
+
   else {
     switch (window.location.hostname) {
       case 'twdownload.com':
