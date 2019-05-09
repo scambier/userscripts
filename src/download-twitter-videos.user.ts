@@ -3,7 +3,7 @@
 // @namespace    https://github.com/scambier/userscripts
 // @author       Simon Cambier
 // @version      0.4
-// @description  Adds a download button to quickly download gifs and videos embedded in tweets
+// @description  Adds a download button to quickly fetch gifs and videos embedded in tweets
 // @license      ISC
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js
 // @include      https://twitter.com/*
@@ -30,9 +30,9 @@
 
   //#region JQuery events
 
-  $(document).on('click', '[data-download-media]', function (e) {
-    let mediaUrl = $(this).attr('data-download-media')!
-    let tweetUrl = $(this).attr('data-tweet-url')!
+  $(document).on('click', '[data-dtv]', function (e) {
+    let mediaUrl = $(this).attr('data-dtv-media-url')!
+    let tweetUrl = $(this).attr('data-dtv-tweet-url')!
 
     if (mediaUrl.startsWith('blob:') || mediaUrl.startsWith('https://t.co')) {
       // If it's a blob video, redirect to twdownload.com
@@ -47,12 +47,12 @@
     setTimeout(() => {
       const tweetUrl = getTweetUrl_tweetDeck(this)
       const article: JQuery<HTMLElement> = $(this).closest('article')
-      const mediaUrl = article.attr('data-media-download')
+      const mediaUrl = article.attr('data-dtv-video')
       const actions = article.find('.js-dropdown-content ul')
-      if (mediaUrl && !actions.find('[data-media-download]').length) {
+      if (mediaUrl && !actions.find('[data-dtv-video]').length) {
         actions.append(`
-          <li class="is-selectable" data-media-download>
-            <a href="#" data-action="download-media" data-download-media="${mediaUrl}" data-tweet-url="${tweetUrl}" data-tweet-url>Download media</a>
+          <li class="is-selectable" data-dtv-video>
+            <a href="#" data-action="download-media" data-dtv data-dtv-media-url="${mediaUrl}" data-dtv-tweet-url="${tweetUrl}" data-dtv-tweet-url>Download media</a>
           </li>`)
       }
     }, 0)
@@ -72,7 +72,8 @@
   const style = document.createElement('style')
   style.setAttribute('type', 'text/css')
   style.appendChild(document.createTextNode(`
-    .dtm-link {
+    .dtv-link {
+      cursor: pointer;
       color: white;
       position: absolute;
       font-size: 1em;
@@ -84,17 +85,17 @@
       opacity: 0;
       transition: 0.2s;
     }
-    .dtm-link img {
+    .dtv-link img {
       border: none;
     }
-    .dtm-link:visited {
+    .dtv-link:visited {
       color: white;
     }
-    .dtm-link:hover {
+    .dtv-link:hover {
       color: white;
     }
 
-    .AdaptiveMediaOuterContainer:hover .dtm-link {
+    .AdaptiveMediaOuterContainer:hover .dtv-link {
       opacity: 1;
       transition: 0.2s;
     }
@@ -118,14 +119,15 @@
 
     // Create the button (not a real button, just a link)
     const link = document.createElement('a')
-    link.className = 'dtm-link'
+    link.className = 'dtv-link'
 
     // Add the download icon
     const icon = document.createElement('img')
     icon.setAttribute('src', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABhUlEQVQ4ja2UvWpUURSFvz0MQUKYYoiCU0qUFCIiqUVSTOETWOUxLHyD1FMFGzufwFLyAlNIggg+gPgHwWCISXB9FrlXruNMIpJzinvhnP2x9l7r3hK5itW/8FTWgGsA6sfq1dcL7s7fSVbUXfWtuq8+W3RXXKyoqpbVe8CwqgBu/39rrWrP51jUwju9yyCNmkvXn4pkGdhUh8igqpbUFrZm3Gre94A9inRqO1tHSXbVI/VYNYlJVM/UoyTf1Kdqv1s7z6376rsupAP7qU6SDGfr/jZSe+q4hbXABvIyyeo8++en4hz2IMl+wzpplNxYlKNKMgK2qupmx+5U1WvgVN2uqjfqpKoeA9c79nwCXlB8IMk4ycnsTNQvSZ6od9WNJK/Us+bMjtJxm+w+sNRmprVbXa2qHWAKjKpqHTgEPgO3gPfAnTZCvS5gThAHwCaw3rQ8rarnwA9g0jx/z+NRkoOZtrpuzdrf5utYPVAftsMeABvAyr9+Do0Aquo7MKU4rKv6sf0CJZXR6U2U6EQAAAAASUVORK5CYII=')
 
-    link.setAttribute('data-download-media', video.src)
-    link.setAttribute('data-tweet-url', getTweetUrl_twitter(video.container))
+    link.setAttribute('data-dtv', '')
+    link.setAttribute('data-dtv-media-url', video.src)
+    link.setAttribute('data-dtv-tweet-url', getTweetUrl_twitter(video.container))
 
     link.appendChild(icon)
     video.container.appendChild(link)
@@ -136,7 +138,7 @@
     const videos: JQuery<HTMLVideoElement> = $('video')
     for (const video of videos) {
       const container = video.closest('.AdaptiveMedia.is-video')
-      if (!container || container.querySelector('[data-download-media]')) continue
+      if (!container || container.querySelector('[data-dtv]')) continue
       elems.push({
         container,
         src: video.currentSrc
@@ -164,7 +166,7 @@
     const gifs: JQuery<Element> = $('.js-media-gif.media-item-gif')
     for (const gif of gifs) {
       const container = gif.closest('article')!
-      if (container.querySelector('[data-download-media]')) continue
+      if (container.querySelector('[data-dtv]')) continue
       elems.push({
         container,
         src: gif.getAttribute('src')!
@@ -176,7 +178,7 @@
       // Only keep "internal" twitter videos
       const src = video.querySelector('[rel=mediaPreview]')!.getAttribute('href')!
       const container = video.closest('article')!
-      if (src.startsWith('https://t.co/') && !container.querySelector('[data-download-media]')) {
+      if (src.startsWith('https://t.co/') && !container.querySelector('[data-dtv]')) {
         elems.push({
           container,
           src
@@ -268,7 +270,7 @@
       const videos = getVideos_tweetdeck()
       for (const video of videos) {
         if (!video.src) continue
-        video.container.setAttribute('data-media-download', video.src)
+        video.container.setAttribute('data-dtv-video', video.src)
       }
     }
   }
