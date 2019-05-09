@@ -34,24 +34,35 @@
     let mediaUrl = $(this).attr('data-download-media')!
     let tweetUrl = $(this).attr('data-tweet-url')!
 
-    if (mediaUrl.startsWith('blob:')) {
+    if (mediaUrl.startsWith('blob:') || mediaUrl.startsWith('https://t.co')) {
       // If it's a blob video, redirect to twdownload.com
       mediaUrl = getRandomItem(externalDomains) + tweetUrl
     }
 
-    window.open(mediaUrl)
     e.stopPropagation()
+    window.open(mediaUrl)
   })
 
-  $(document).on('click', 'a.tweet-action', function (e) {
+  $(document).on('click', 'a.tweet-action, a.tweet-detail-action', function (e) {
     setTimeout(() => {
+      const tweetUrl = getTweetUrl_tweetDeck(this)
       const article: JQuery<HTMLElement> = $(this).closest('article')
-      const url = article.attr('data-media-download')
+      const mediaUrl = article.attr('data-media-download')
       const actions = article.find('.js-dropdown-content ul')
-      if (url && !actions.find('[data-media-download]').length) {
-        actions.append('<li class="is-selectable" data-media-download><a href="#" data-action="embed">LOL</a></li>')
+      if (mediaUrl && !actions.find('[data-media-download]').length) {
+        actions.append(`
+          <li class="is-selectable" data-media-download>
+            <a href="#" data-action="download-media" data-download-media="${mediaUrl}" data-tweet-url="${tweetUrl}" data-tweet-url>Download media</a>
+          </li>`)
       }
-    }, 100)
+    }, 0)
+  })
+
+  $(document).on('mouseenter', '.is-selectable', function (e) {
+    $(this).addClass('is-selected')
+  })
+  $(document).on('mouseleave', '.is-selectable', function (e) {
+    $(this).removeClass('is-selected')
   })
 
   //#endregion
@@ -95,7 +106,7 @@
 
   //#region Twitter
 
-  function getTweetUrlTwitter(videoContainer: Element): string {
+  function getTweetUrl_twitter(videoContainer: Element): string {
     return location.origin + videoContainer.closest('[data-permalink-path]')!.getAttribute('data-permalink-path')!
   }
 
@@ -108,24 +119,24 @@
     // Create the button (not a real button, just a link)
     const link = document.createElement('a')
     link.className = 'dtm-link'
-    
+
     // Add the download icon
     const icon = document.createElement('img')
     icon.setAttribute('src', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABhUlEQVQ4ja2UvWpUURSFvz0MQUKYYoiCU0qUFCIiqUVSTOETWOUxLHyD1FMFGzufwFLyAlNIggg+gPgHwWCISXB9FrlXruNMIpJzinvhnP2x9l7r3hK5itW/8FTWgGsA6sfq1dcL7s7fSVbUXfWtuq8+W3RXXKyoqpbVe8CwqgBu/39rrWrP51jUwju9yyCNmkvXn4pkGdhUh8igqpbUFrZm3Gre94A9inRqO1tHSXbVI/VYNYlJVM/UoyTf1Kdqv1s7z6376rsupAP7qU6SDGfr/jZSe+q4hbXABvIyyeo8++en4hz2IMl+wzpplNxYlKNKMgK2qupmx+5U1WvgVN2uqjfqpKoeA9c79nwCXlB8IMk4ycnsTNQvSZ6od9WNJK/Us+bMjtJxm+w+sNRmprVbXa2qHWAKjKpqHTgEPgO3gPfAnTZCvS5gThAHwCaw3rQ8rarnwA9g0jx/z+NRkoOZtrpuzdrf5utYPVAftsMeABvAyr9+Do0Aquo7MKU4rKv6sf0CJZXR6U2U6EQAAAAASUVORK5CYII=')
 
     link.setAttribute('data-download-media', video.src)
-    link.setAttribute('data-tweet-url', getTweetUrlTwitter(video.container))
+    link.setAttribute('data-tweet-url', getTweetUrl_twitter(video.container))
 
     link.appendChild(icon)
     video.container.appendChild(link)
   }
 
-  function getVideosTwitter() {
+  function getVideos_twitter() {
     const elems: IMediaBlock[] = []
     const videos: JQuery<HTMLVideoElement> = $('video')
     for (const video of videos) {
-      const container = video.closest('.AdaptiveMedia.is-video')!
-      if (container.querySelector('[data-download-media]')) continue
+      const container = video.closest('.AdaptiveMedia.is-video')
+      if (!container || container.querySelector('[data-download-media]')) continue
       elems.push({
         container,
         src: video.currentSrc
@@ -138,14 +149,16 @@
 
   //#region Tweetdeck
 
-  function getTweetUrlTweetDeck(video: Element) {
-    const article = video.closest('article')!
-    const id = video.getAttribute('data-tweet-id')
-    const baseUrl = article.querySelector('a[rel="user"]')!.getAttribute('href')
-    return baseUrl + '/' + id
+  function getTweetUrl_tweetDeck(elem: Element) {
+    const article = elem.closest('article')!
+    const tweetLink = article.querySelector('[rel="url"]')
+    if (tweetLink) {
+      return tweetLink.getAttribute('href')
+    }
+    throw new Error('DTV - Could not found tweet url')
   }
 
-  function getVideosTweetdeck() {
+  function getVideos_tweetdeck() {
     const elems: IMediaBlock[] = []
 
     const gifs: JQuery<Element> = $('.js-media-gif.media-item-gif')
@@ -245,14 +258,14 @@
   function main() {
 
     if (isTwitter()) {
-      const videos = getVideosTwitter()
+      const videos = getVideos_twitter()
       for (const video of videos) {
         addButtonOverVideo(video)
       }
     }
 
-    if (isTweetdeck()) {
-      const videos = getVideosTweetdeck()
+    else if (isTweetdeck()) {
+      const videos = getVideos_tweetdeck()
       for (const video of videos) {
         if (!video.src) continue
         video.container.setAttribute('data-media-download', video.src)
