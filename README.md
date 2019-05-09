@@ -1,6 +1,6 @@
 # Userscripts
 
-## Dowload Twitter Videos
+## [Dowload Twitter Videos](src/download-twitter-videos.user.ts)
 
 Get it on [openuserjs.org](https://openuserjs.org/scripts/scambier/Dowload_Twitter_Videos) or [greasyfork.org](https://greasyfork.org/en/scripts/382640-twitter-video-download)
 
