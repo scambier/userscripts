@@ -1,0 +1,26 @@
+{
+  "name": "userscripts",
+  "version": "1.0.0",
+  "description": "A collection of userscripts",
+  "main": "''",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scambier/userscripts.git"
+  },
+  "author": "Simon Cambier",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/scambier/userscripts/issues"
+  },
+  "homepage": "https://github.com/scambier/userscripts#readme",
+  "devDependencies": {
+    "@types/jquery": "^3.3.29",
+    "@typescript-eslint/eslint-plugin": "^1.7.0",
+    "@typescript-eslint/parser": "^1.7.0",
+    "eslint": "^5.16.0",
+    "typescript": "^3.4.5"
+  }
+}
