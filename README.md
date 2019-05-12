@@ -1,6 +1,6 @@
 # Userscripts
 
-## [Dowload Twitter Videos](src/download-twitter-videos.user.ts)
+## [Dowload Twitter Videos](dist/download-twitter-videos.user.js)
 
 Get it on [openuserjs.org](https://openuserjs.org/scripts/scambier/Dowload_Twitter_Videos) or [greasyfork.org](https://greasyfork.org/en/scripts/382640-twitter-video-download)
 
@@ -15,6 +15,14 @@ Gifs are directly accessible, but videos will redirect you to one of the followi
 **It will automatically fill the form and submit it.** You'll still have to pick the desired resolution :)
 
 This script is _NOT_ affiliated with these sites.
+
+## [Better PCGamer](dist/better-pcgamer.user.js)
+
+Get it on [openuserjs.org](https://openuserjs.org/scripts/scambier/Better_PCGamer) or [greasyfork.org](https://greasyfork.org/en/scripts/382959-better-pcgamer)
+
+Enhance your reading experience of PCGamer articles. Removes the useless sidebar, interstitial unrelated videos, and Disqus comments.
+
+A cog button is available in the bottom left corner to enable/disable options.
 
 ## What are userscripts, and how to install them
 
