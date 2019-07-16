@@ -3,7 +3,7 @@
 // @name         Dowload Twitter Videos
 // @namespace    https://github.com/scambier/userscripts
 // @author       Simon Cambier
-// @version      0.5
+// @version      0.5.1
 // @description  Adds a download button to quickly fetch gifs and videos embedded in tweets
 // @license      ISC
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js
@@ -15,7 +15,7 @@
 // @grant        none
 // @run-at       document-end
 // ==/UserScript==
-console = unsafeWindow.console;
+// console = unsafeWindow.console;
 (() => {
     'use strict';
     // Do not reexecute script when Twitter location changes
