@@ -2,7 +2,7 @@
 // @name         Dowload Twitter Videos
 // @namespace    https://github.com/scambier/userscripts
 // @author       Simon Cambier
-// @version      0.4
+// @version      0.5
 // @description  Adds a download button to quickly fetch gifs and videos embedded in tweets
 // @license      ISC
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js
@@ -15,11 +15,13 @@
 // @run-at       document-end
 // ==/UserScript==
 
-(function () {
+console = unsafeWindow.console;
+
+(() => {
   'use strict'
 
   interface IMediaBlock {
-    container: Element,
+    videoContainer: Element,
     src?: string
   }
 
@@ -30,9 +32,9 @@
 
   //#region JQuery events
 
-  $(document).on('click', '[data-dtv]', function (e) {
+  $(document).on('click', '[data-dtv]', function(e): void {
     let mediaUrl = $(this).attr('data-dtv-media-url')!
-    let tweetUrl = $(this).attr('data-dtv-tweet-url')!
+    const tweetUrl = $(this).attr('data-dtv-tweet-url')!
 
     if (mediaUrl.startsWith('blob:') || mediaUrl.startsWith('https://t.co')) {
       // If it's a blob video, redirect to twdownload.com
@@ -43,7 +45,7 @@
     window.open(mediaUrl)
   })
 
-  $(document).on('click', 'a.tweet-action, a.tweet-detail-action', function (e) {
+  $(document).on('click', 'a.tweet-action, a.tweet-detail-action', function(e): void {
     setTimeout(() => {
       const tweetUrl = getTweetUrl_tweetDeck(this)
       const article: JQuery<HTMLElement> = $(this).closest('article')
@@ -58,10 +60,10 @@
     }, 0)
   })
 
-  $(document).on('mouseenter', '.is-selectable', function (e) {
+  $(document).on('mouseenter', '.is-selectable', function(e): void {
     $(this).addClass('is-selected')
   })
-  $(document).on('mouseleave', '.is-selectable', function (e) {
+  $(document).on('mouseleave', '.is-selectable', function(e): void {
     $(this).removeClass('is-selected')
   })
 
@@ -95,7 +97,7 @@
       color: white;
     }
 
-    .AdaptiveMediaOuterContainer:hover .dtv-link {
+    article:hover .dtv-link {
       opacity: 1;
       transition: 0.2s;
     }
@@ -108,14 +110,17 @@
   //#region Twitter
 
   function getTweetUrl_twitter(videoContainer: Element): string {
-    return location.origin + videoContainer.closest('[data-permalink-path]')!.getAttribute('data-permalink-path')!
+    return location.origin + $(videoContainer).closest('article').find('a[href*="status"]')[0].getAttribute('href')!
   }
 
-  function addButtonOverVideo(video: IMediaBlock) {
+  function addButtonOverVideo(video: IMediaBlock): void {
     // Make sure that the link exists
-    if (!video.src) return
+    if (!video.src) { return }
 
-    video.container.setAttribute('style', 'position: relative;')
+    // If button is already added
+    if ($(video.videoContainer).find('[data-dtv]').length) { return }
+
+    // video.container.setAttribute('style', 'position: relative;')
 
     // Create the button (not a real button, just a link)
     const link = document.createElement('a')
@@ -127,20 +132,20 @@
 
     link.setAttribute('data-dtv', '')
     link.setAttribute('data-dtv-media-url', video.src)
-    link.setAttribute('data-dtv-tweet-url', getTweetUrl_twitter(video.container))
+    link.setAttribute('data-dtv-tweet-url', getTweetUrl_twitter(video.videoContainer))
 
     link.appendChild(icon)
-    video.container.appendChild(link)
+    video.videoContainer.appendChild(link)
   }
 
-  function getVideos_twitter() {
+  function getVideos_twitter(): IMediaBlock[] {
     const elems: IMediaBlock[] = []
     const videos: JQuery<HTMLVideoElement> = $('video')
     for (const video of videos) {
-      const container = video.closest('.AdaptiveMedia.is-video')
-      if (!container || container.querySelector('[data-dtv]')) continue
+      const videoContainer = $(video).parent().get(0)
+      // if (!container || container.querySelector('[data-dtv]')) { continue }
       elems.push({
-        container,
+        videoContainer,
         src: video.currentSrc
       })
     }
@@ -151,7 +156,7 @@
 
   //#region Tweetdeck
 
-  function getTweetUrl_tweetDeck(elem: Element) {
+  function getTweetUrl_tweetDeck(elem: Element): string | null {
     const article = elem.closest('article')!
     const tweetLink = article.querySelector('[rel="url"]')
     if (tweetLink) {
@@ -160,15 +165,15 @@
     throw new Error('DTV - Could not found tweet url')
   }
 
-  function getVideos_tweetdeck() {
+  function getVideos_tweetdeck(): IMediaBlock[] {
     const elems: IMediaBlock[] = []
 
     const gifs: JQuery<Element> = $('.js-media-gif.media-item-gif')
     for (const gif of gifs) {
       const container = gif.closest('article')!
-      if (container.querySelector('[data-dtv]')) continue
+      if (container.querySelector('[data-dtv]')) { continue }
       elems.push({
-        container,
+        videoContainer: container,
         src: gif.getAttribute('src')!
       })
     }
@@ -180,7 +185,7 @@
       const container = video.closest('article')!
       if (src.startsWith('https://t.co/') && !container.querySelector('[data-dtv]')) {
         elems.push({
-          container,
+          videoContainer: container,
           src
         })
       }
@@ -195,10 +200,10 @@
   const externalDomains = [
     'https://twdownload.com/?url=',
     'http://twittervideodownloader.com/?url=',
-    'http://savetweetvid.com/?url=',
+    // 'http://savetweetvid.com/?url=', // TODO: check if still broken
   ]
 
-  function download_twdownloader() {
+  function download_twdownloader(): void {
     const url = getUrlQuery()
     if (url) {
       const form = document.querySelector('form[action="/download-track/"]') as HTMLElement
@@ -209,7 +214,7 @@
     }
   }
 
-  function download_twittervideodownloader() {
+  function download_twittervideodownloader(): void {
     const url = getUrlQuery()
     if (url) {
       const form = document.querySelector('form[action="/download"]') as HTMLElement
@@ -220,7 +225,7 @@
     }
   }
 
-  function download_savetweetvid() {
+  function download_savetweetvid(): void {
     const url = getUrlQuery()
     if (url) {
       const form = document.getElementById('form_download') as HTMLElement
@@ -235,20 +240,20 @@
 
   //#region Utils
 
-  function isTwitter() {
+  function isTwitter(): boolean {
     return location.host === 'twitter.com'
   }
 
-  function isTweetdeck() {
+  function isTweetdeck(): boolean {
     return location.host === 'tweetdeck.twitter.com'
   }
 
-  function getUrlQuery() {
+  function getUrlQuery(): string | null {
     const urlParams = new URLSearchParams(window.location.search)
     return urlParams.get('url')
   }
 
-  function getRandomItem(items: any[]) {
+  function getRandomItem<T>(items: T[]): T {
     return items[Math.floor(Math.random() * items.length)]
   }
 
@@ -257,10 +262,11 @@
   /**
    * Create download links on the timeline
    */
-  function main() {
+  function main(): void {
 
     if (isTwitter()) {
       const videos = getVideos_twitter()
+
       for (const video of videos) {
         addButtonOverVideo(video)
       }
@@ -269,8 +275,8 @@
     else if (isTweetdeck()) {
       const videos = getVideos_tweetdeck()
       for (const video of videos) {
-        if (!video.src) continue
-        video.container.setAttribute('data-dtv-video', video.src)
+        if (!video.src) { continue }
+        video.videoContainer.setAttribute('data-dtv-video', video.src)
       }
     }
   }
@@ -296,6 +302,5 @@
         break
     }
   }
-
 
 })()

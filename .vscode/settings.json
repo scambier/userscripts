@@ -1,3 +1,8 @@
 {
-  "eslint.autoFixOnSave":  true
+  "eslint.autoFixOnSave":  true,
+  "typescript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
+	"editor.codeActionsOnSave": {
+		"source.organizeImports": false,
+		"source.fixAll.tslint": true
+	},
 }

@@ -3,7 +3,7 @@
 // @name         Dowload Twitter Videos
 // @namespace    https://github.com/scambier/userscripts
 // @author       Simon Cambier
-// @version      0.4
+// @version      0.5
 // @description  Adds a download button to quickly fetch gifs and videos embedded in tweets
 // @license      ISC
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js
@@ -15,7 +15,8 @@
 // @grant        none
 // @run-at       document-end
 // ==/UserScript==
-(function () {
+console = unsafeWindow.console;
+(() => {
     'use strict';
     // Do not reexecute script when Twitter location changes
     if (window.location.href.includes('twitter.com/i/cards')) {
@@ -24,7 +25,7 @@
     //#region JQuery events
     $(document).on('click', '[data-dtv]', function (e) {
         let mediaUrl = $(this).attr('data-dtv-media-url');
-        let tweetUrl = $(this).attr('data-dtv-tweet-url');
+        const tweetUrl = $(this).attr('data-dtv-tweet-url');
         if (mediaUrl.startsWith('blob:') || mediaUrl.startsWith('https://t.co')) {
             // If it's a blob video, redirect to twdownload.com
             mediaUrl = getRandomItem(externalDomains) + tweetUrl;
@@ -80,7 +81,7 @@
       color: white;
     }
 
-    .AdaptiveMediaOuterContainer:hover .dtv-link {
+    article:hover .dtv-link {
       opacity: 1;
       transition: 0.2s;
     }
@@ -90,13 +91,18 @@
     //#endregion CSS
     //#region Twitter
     function getTweetUrl_twitter(videoContainer) {
-        return location.origin + videoContainer.closest('[data-permalink-path]').getAttribute('data-permalink-path');
+        return location.origin + $(videoContainer).closest('article').find('a[href*="status"]')[0].getAttribute('href');
     }
     function addButtonOverVideo(video) {
         // Make sure that the link exists
-        if (!video.src)
+        if (!video.src) {
             return;
-        video.container.setAttribute('style', 'position: relative;');
+        }
+        // If button is already added
+        if ($(video.videoContainer).find('[data-dtv]').length) {
+            return;
+        }
+        // video.container.setAttribute('style', 'position: relative;')
         // Create the button (not a real button, just a link)
         const link = document.createElement('a');
         link.className = 'dtv-link';
@@ -105,19 +111,18 @@
         icon.setAttribute('src', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABhUlEQVQ4ja2UvWpUURSFvz0MQUKYYoiCU0qUFCIiqUVSTOETWOUxLHyD1FMFGzufwFLyAlNIggg+gPgHwWCISXB9FrlXruNMIpJzinvhnP2x9l7r3hK5itW/8FTWgGsA6sfq1dcL7s7fSVbUXfWtuq8+W3RXXKyoqpbVe8CwqgBu/39rrWrP51jUwju9yyCNmkvXn4pkGdhUh8igqpbUFrZm3Gre94A9inRqO1tHSXbVI/VYNYlJVM/UoyTf1Kdqv1s7z6376rsupAP7qU6SDGfr/jZSe+q4hbXABvIyyeo8++en4hz2IMl+wzpplNxYlKNKMgK2qupmx+5U1WvgVN2uqjfqpKoeA9c79nwCXlB8IMk4ycnsTNQvSZ6od9WNJK/Us+bMjtJxm+w+sNRmprVbXa2qHWAKjKpqHTgEPgO3gPfAnTZCvS5gThAHwCaw3rQ8rarnwA9g0jx/z+NRkoOZtrpuzdrf5utYPVAftsMeABvAyr9+Do0Aquo7MKU4rKv6sf0CJZXR6U2U6EQAAAAASUVORK5CYII=');
         link.setAttribute('data-dtv', '');
         link.setAttribute('data-dtv-media-url', video.src);
-        link.setAttribute('data-dtv-tweet-url', getTweetUrl_twitter(video.container));
+        link.setAttribute('data-dtv-tweet-url', getTweetUrl_twitter(video.videoContainer));
         link.appendChild(icon);
-        video.container.appendChild(link);
+        video.videoContainer.appendChild(link);
     }
     function getVideos_twitter() {
         const elems = [];
         const videos = $('video');
         for (const video of videos) {
-            const container = video.closest('.AdaptiveMedia.is-video');
-            if (!container || container.querySelector('[data-dtv]'))
-                continue;
+            const videoContainer = $(video).parent().get(0);
+            // if (!container || container.querySelector('[data-dtv]')) { continue }
             elems.push({
-                container,
+                videoContainer,
                 src: video.currentSrc
             });
         }
@@ -138,10 +143,11 @@
         const gifs = $('.js-media-gif.media-item-gif');
         for (const gif of gifs) {
             const container = gif.closest('article');
-            if (container.querySelector('[data-dtv]'))
+            if (container.querySelector('[data-dtv]')) {
                 continue;
+            }
             elems.push({
-                container,
+                videoContainer: container,
                 src: gif.getAttribute('src')
             });
         }
@@ -152,7 +158,7 @@
             const container = video.closest('article');
             if (src.startsWith('https://t.co/') && !container.querySelector('[data-dtv]')) {
                 elems.push({
-                    container,
+                    videoContainer: container,
                     src
                 });
             }
@@ -164,7 +170,6 @@
     const externalDomains = [
         'https://twdownload.com/?url=',
         'http://twittervideodownloader.com/?url=',
-        'http://savetweetvid.com/?url=',
     ];
     function download_twdownloader() {
         const url = getUrlQuery();
@@ -225,9 +230,10 @@
         else if (isTweetdeck()) {
             const videos = getVideos_tweetdeck();
             for (const video of videos) {
-                if (!video.src)
+                if (!video.src) {
                     continue;
-                video.container.setAttribute('data-dtv-video', video.src);
+                }
+                video.videoContainer.setAttribute('data-dtv-video', video.src);
             }
         }
     }
