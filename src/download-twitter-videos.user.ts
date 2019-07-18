@@ -2,7 +2,7 @@
 // @name         Dowload Twitter Videos
 // @namespace    https://github.com/scambier/userscripts
 // @author       Simon Cambier
-// @version      0.5.2
+// @version      0.5.3
 // @description  Adds a download button to quickly fetch gifs and videos embedded in tweets
 // @license      ISC
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js
@@ -11,6 +11,7 @@
 // @include      https://twdownload.com/?url=*
 // @include      http://twittervideodownloader.com/?url=*
 // @include      https://www.savetweetvid.com/?url=*
+// @include      https://twdownloader.net/?url=*
 // @grant        none
 // @run-at       document-end
 // ==/UserScript==
@@ -25,6 +26,19 @@
     src?: string
   }
 
+  const externalDomains = [
+    'https://twdownload.com/?url=',
+    'http://savetweetvid.com/?url=',
+
+    'http://twittervideodownloader.com/?url=',
+    'https://twdownloader.net/?url='
+  ]
+
+  const externalDomainsBloquotes = [
+    'http://twittervideodownloader.com/?url=',
+    'https://twdownloader.net/?url='
+  ]
+
   // Do not reexecute script when Twitter location changes
   if (window.location.href.includes('twitter.com/i/cards')) {
     return
@@ -35,10 +49,15 @@
   $(document).on('click', '[data-dtv]', function(e): void {
     let mediaUrl = $(this).attr('data-dtv-media-url')!
     const tweetUrl = $(this).attr('data-dtv-tweet-url')!
+    const blockquote = $(this).attr('data-dtv-blockquote') === 'true'
 
     if (mediaUrl.startsWith('blob:') || mediaUrl.startsWith('https://t.co')) {
       // If it's a blob video, redirect to twdownload.com
-      mediaUrl = getRandomItem(externalDomains) + tweetUrl
+      mediaUrl = (
+        blockquote
+          ? getRandomItem(externalDomainsBloquotes) // These urls are compatible with blockquotes
+          : getRandomItem(externalDomains)
+      ) + tweetUrl
     }
 
     e.stopPropagation()
@@ -118,9 +137,7 @@
     if (!video.src) { return }
 
     // If it's a blockquote
-    // TODO: the button should open the tweet, launch the download process, then go back
-    const blockquotes = $(video.videoContainer).closest('div[role="blockquote"]')
-    if (blockquotes.length) { return }
+    const blockquote = $(video.videoContainer).closest('div[role="blockquote"]')[0]
 
     // If button is already added
     if ($(video.videoContainer).find('[data-dtv]').length) { return }
@@ -138,6 +155,9 @@
     link.setAttribute('data-dtv', '')
     link.setAttribute('data-dtv-media-url', video.src)
     link.setAttribute('data-dtv-tweet-url', getTweetUrl_twitter(video.videoContainer))
+    if (blockquote) {
+      link.setAttribute('data-dtv-blockquote', 'true')
+    }
 
     link.appendChild(icon)
     video.videoContainer.appendChild(link)
@@ -202,13 +222,7 @@
 
   //#region External services
 
-  const externalDomains = [
-    'https://twdownload.com/?url=',
-    'http://twittervideodownloader.com/?url=',
-    'http://savetweetvid.com/?url=', // TODO: check if still broken
-  ]
-
-  function download_twdownloader(): void {
+  function download_twdownload(): void {
     const url = getUrlQuery()
     if (url) {
       const form = document.querySelector('form[action="/download-track/"]') as HTMLElement
@@ -235,6 +249,17 @@
     if (url) {
       const form = document.getElementById('form_download') as HTMLElement
       const input = form.querySelector('input[name="url"]') as HTMLElement
+      const submit = form.querySelector('[type="submit"]') as HTMLElement
+      input.setAttribute('value', url)
+      submit.click()
+    }
+  }
+
+  function download_twdownloader(): void {
+    const url = getUrlQuery()
+    if (url) {
+      const form = document.querySelector('form[action="/download/"]') as HTMLElement
+      const input = form.querySelector('input[name="tweet"]') as HTMLElement
       const submit = form.querySelector('[type="submit"]') as HTMLElement
       input.setAttribute('value', url)
       submit.click()
@@ -295,15 +320,20 @@
   else {
     switch (window.location.hostname) {
       case 'twdownload.com':
-        download_twdownloader()
+        download_twdownload()
+        break
+
+      case 'www.savetweetvid.com':
+        download_savetweetvid()
         break
 
       case 'twittervideodownloader.com':
         download_twittervideodownloader()
         break
 
-      case 'www.savetweetvid.com':
-        download_savetweetvid()
+      case 'twdownloader.net':
+          console.log('ok')
+          download_twdownloader()
         break
     }
   }
