@@ -2,7 +2,7 @@
 // @name         Dowload Twitter Videos
 // @namespace    https://github.com/scambier/userscripts
 // @author       Simon Cambier
-// @version      0.5.1
+// @version      0.5.2
 // @description  Adds a download button to quickly fetch gifs and videos embedded in tweets
 // @license      ISC
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js
@@ -117,6 +117,11 @@
     // Make sure that the link exists
     if (!video.src) { return }
 
+    // If it's a blockquote
+    // TODO: the button should open the tweet, launch the download process, then go back
+    const blockquotes = $(video.videoContainer).closest('div[role="blockquote"]')
+    if (blockquotes.length) { return }
+
     // If button is already added
     if ($(video.videoContainer).find('[data-dtv]').length) { return }
 
@@ -200,7 +205,7 @@
   const externalDomains = [
     'https://twdownload.com/?url=',
     'http://twittervideodownloader.com/?url=',
-    // 'http://savetweetvid.com/?url=', // TODO: check if still broken
+    'http://savetweetvid.com/?url=', // TODO: check if still broken
   ]
 
   function download_twdownloader(): void {
@@ -284,7 +289,7 @@
   if (location.hostname.includes('twitter.com')) {
     setInterval(() => {
       main()
-    }, 500)
+    }, 1000)
   }
 
   else {
