@@ -3,16 +3,14 @@
 // @name         Dowload Twitter Videos
 // @namespace    https://github.com/scambier/userscripts
 // @author       Simon Cambier
-// @version      0.5.3
+// @version      0.5.4
 // @description  Adds a download button to quickly fetch gifs and videos embedded in tweets
 // @license      ISC
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js
 // @include      https://twitter.com/*
 // @include      https://tweetdeck.twitter.com/*
-// @include      https://twdownload.com/?url=*
 // @include      http://twittervideodownloader.com/?url=*
 // @include      https://www.savetweetvid.com/?url=*
-// @include      https://twdownloader.net/?url=*
 // @grant        none
 // @run-at       document-end
 // ==/UserScript==
@@ -20,14 +18,12 @@
 (() => {
     'use strict';
     const externalDomains = [
-        'https://twdownload.com/?url=',
+        // 'https://twdownload.com/?url=',
         'http://savetweetvid.com/?url=',
         'http://twittervideodownloader.com/?url=',
-        'https://twdownloader.net/?url='
     ];
-    const externalDomainsBloquotes = [
+    const externalDomainsBlockquotes = [
         'http://twittervideodownloader.com/?url=',
-        'https://twdownloader.net/?url='
     ];
     // Do not reexecute script when Twitter location changes
     if (window.location.href.includes('twitter.com/i/cards')) {
@@ -41,7 +37,7 @@
         if (mediaUrl.startsWith('blob:') || mediaUrl.startsWith('https://t.co')) {
             // If it's a blob video, redirect to twdownload.com
             mediaUrl = (blockquote
-                ? getRandomItem(externalDomainsBloquotes) // These urls are compatible with blockquotes
+                ? getRandomItem(externalDomainsBlockquotes) // These urls are compatible with blockquotes
                 : getRandomItem(externalDomains)) + tweetUrl;
         }
         e.stopPropagation();
