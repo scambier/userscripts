@@ -2,7 +2,7 @@
 // @name         Hacker News - Most upvoted & most commented links
 // @namespace    https://github.com/scambier/userscripts
 // @author       Simon Cambier
-// @version      0.0.3
+// @version      0.0.4
 // @description  Show top 🔥👄 links of Hacker News
 // @license      ISC
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js
@@ -18,9 +18,8 @@
   // Get top 20%
   function getTop<T extends { [key: string]: any }>(items: T[], key: string): T[] {
     const count = rows.length;
-    return items.sort((a, b) => b[key] - a[key]).slice(0, count * .2)
+    return [...items].sort((a, b) => b[key] - a[key]).slice(0, count * .2)
   }
-
 
   // Select lines
   const items = rows
