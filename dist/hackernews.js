@@ -1,10 +1,10 @@
 "use strict";
 // ==UserScript==
-// @name         Hackernews best
+// @name         Hacker News - Most upvoted & most commented links
 // @namespace    https://github.com/scambier/userscripts
 // @author       Simon Cambier
-// @version      0.0.1
-// @description  Show top 🔝 links of Hackernews
+// @version      0.0.2
+// @description  Show top 🔥👄 links of Hacker News
 // @license      ISC
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js
 // @include      https://news.ycombinator.com/*
@@ -12,27 +12,36 @@
 // @run-at       document-end
 // ==/UserScript==
 (() => {
-    // Show arrows on top 20%
-    const count = [...$('tr.athing')].length;
+    const rows = [...$('tr.athing')];
+    // Get top 20%
+    function getTop(items, key) {
+        const count = rows.length;
+        return items.sort((a, b) => b[key] - a[key]).slice(0, count * .2);
+    }
     // Select lines
-    [...$('tr.athing')]
+    const items = rows
         // Filter out ads
         .filter(tr => $(tr).find('td.votelinks').length)
         // Get id and score
         .map(tr => {
-        var _a;
+        var _a, _b;
         return {
             id: $(tr).attr('id'),
-            score: Number((_a = $(tr).next().find('.score')[0].textContent) === null || _a === void 0 ? void 0 : _a.split(' ')[0])
+            score: Number((_a = $(tr).next().find('.score')[0].textContent) === null || _a === void 0 ? void 0 : _a.split(' ')[0]),
+            // Weirdly, .split(' ') does not work
+            comments: Number((_b = $(tr).next().find('a:contains("comments")').text().split('comments')[0].trim(), (_b !== null && _b !== void 0 ? _b : 0)))
         };
-    })
-        // Sort by score descending
-        .sort((a, b) => b.score - a.score)
-        // Keep the top items
-        .slice(0, count * 0.2)
-        // Mark those lines
-        .forEach(o => {
+    });
+    // Inject icons
+    items.forEach(o => {
         const link = $(`tr#${o.id}`).find('a.storylink');
-        link.text('🔝 ' + link.text());
+        const topScores = getTop(items, 'score');
+        const topComments = getTop(items, 'comments');
+        if (topScores.includes(o)) {
+            link.html('<span title="Most upvoted">👄 </span>' + link.html());
+        }
+        if (topComments.includes(o)) {
+            link.html('<span title="Most commented">🔥 </span>' + link.html());
+        }
     });
 })();
