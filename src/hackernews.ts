@@ -2,7 +2,7 @@
 // @name         Hacker News - Most upvoted & most commented links
 // @namespace    https://github.com/scambier/userscripts
 // @author       Simon Cambier
-// @version      0.0.2
+// @version      0.0.3
 // @description  Show top 🔥👄 links of Hacker News
 // @license      ISC
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js
@@ -38,16 +38,15 @@
 
   // Inject icons
   items.forEach(o => {
-    const link = $(`tr#${o.id}`).find('a.storylink')
-    const topScores = getTop(items, 'score')
-    const topComments = getTop(items, 'comments')
+    if (getTop(items, 'comments').includes(o)) {
+      const link = $(`tr#${o.id}`).find('a.storylink')
+      link.html('<span title="Most commented">👄 </span>' + link.html())
+    }
+    if (getTop(items, 'score').includes(o)) {
+      const link = $(`tr#${o.id}`).find('a.storylink')
+      link.html('<span title="Most upvoted">🔥 </span>' + link.html())
+    }
 
-    if (topScores.includes(o)) {
-      link.html('<span title="Most upvoted">👄 </span>' + link.html())
-    }
-    if (topComments.includes(o)) {
-      link.html('<span title="Most commented">🔥 </span>' + link.html())
-    }
   })
 
 })()
