@@ -2,27 +2,24 @@
 
 ## [Dowload Twitter Videos](dist/download-twitter-videos.user.js)
 
-Get it on [openuserjs.org](https://openuserjs.org/scripts/scambier/Dowload_Twitter_Videos) or [greasyfork.org](https://greasyfork.org/en/scripts/382640-twitter-video-download)
+- [Greasyfork](https://greasyfork.org/en/scripts/382640-twitter-video-download)
+- [Openuserjs](https://openuserjs.org/scripts/scambier/Dowload_Twitter_Videos)
 
-Hover your mouse over the videos and gifs to show a download button in their corner
+Hover your mouse over the videos and gifs to show a download button in their corner.
 
-Gifs are directly accessible, but videos will redirect you to one of the following tools:
+## [Hacker News](dist/hackernews.user.js)
 
-- twdownload.com
-- twittervideodownloader.com
-- savetweetvid.com
+- [Greasyfork](https://greasyfork.org/en/scripts/394246-hacker-news-most-upvoted-most-commented-links)
+- [Openuserjs](https://openuserjs.org/scripts/scambier/Hacker_News_-_Most_upvoted_most_commented_links)
 
-**It will automatically fill the form and submit it.** You'll still have to pick the desired resolution :)
-
-This script is _NOT_ affiliated with these sites.
+Adds emojis to show most upvoted 🔥 and most commented 👄 links of Hacker News.
 
 ## [Better PCGamer](dist/better-pcgamer.user.js)
 
-Get it on [openuserjs.org](https://openuserjs.org/scripts/scambier/Better_PCGamer) or [greasyfork.org](https://greasyfork.org/en/scripts/382959-better-pcgamer)
+- [Greasyfork](https://greasyfork.org/en/scripts/382959-better-pcgamer)
+- [Openuserjs](https://openuserjs.org/scripts/scambier/Better_PCGamer)
 
 Enhance your reading experience of PCGamer articles. Removes the useless sidebar, interstitial unrelated videos, and Disqus comments.
-
-A cog button is available in the bottom left corner to enable/disable options.
 
 ## What are userscripts, and how to install them
 
