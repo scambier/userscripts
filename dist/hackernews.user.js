@@ -3,7 +3,7 @@
 // @name         Hacker News - Most upvoted & most commented links
 // @namespace    https://github.com/scambier/userscripts
 // @author       Simon Cambier
-// @version      0.0.5
+// @version      0.0.6
 // @description  Show top 🔥👄 links of Hacker News
 // @license      ISC
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js
@@ -12,15 +12,18 @@
 // @run-at       document-end
 // ==/UserScript==
 (() => {
+    // Firefox mobile fix, do nothing if icons are already injected
+    if ([...$('[data-userscript="scambier"]')].length)
+        return;
     const rows = [...$('tr.athing')];
-    // Top 10% for new entries, top 20% for other pages
-    const ratio = location.href.includes('news.ycombinator.com/newest') ? .1 : .2;
     /**
-     * Get [ratio]% best entries, ordered by [key]
+     * Get [ratio] best [items], ordered by [key]
+     *
      * @param items
      * @param key
+     * @param ratio
      */
-    function getTop(items, key) {
+    function getTop(items, key, ratio) {
         const count = rows.length;
         return [...items].sort((a, b) => b[key] - a[key]).slice(0, count * ratio);
     }
@@ -38,15 +41,17 @@
             comments: Number((_b = $(tr).next().find('a:contains("comments")').text().split('comments')[0].trim(), (_b !== null && _b !== void 0 ? _b : 0)))
         };
     });
+    // Top 10% for new entries, top 20% for other pages
+    const ratio = location.href.includes('news.ycombinator.com/newest') ? .1 : .2;
     // Inject icons
     items.forEach(o => {
-        if (getTop(items, 'comments').includes(o) && o.comments > 0) {
+        if (getTop(items, 'comments', ratio).includes(o) && o.comments > 0) {
             const link = $(`tr#${o.id}`).find('a.storylink');
-            link.html('<span title="Most commented">👄 </span>' + link.html());
+            link.html('<span title="Most commented" data-userscript="scambier">👄 </span>' + link.html());
         }
-        if (getTop(items, 'score').includes(o) && o.score > 0) {
+        if (getTop(items, 'score', ratio).includes(o) && o.score > 0) {
             const link = $(`tr#${o.id}`).find('a.storylink');
-            link.html('<span title="Most upvoted">🔥 </span>' + link.html());
+            link.html('<span title="Most upvoted" data-userscript="scambier">🔥 </span>' + link.html());
         }
     });
 })();
