@@ -3,6 +3,7 @@
   "typescript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
 	"editor.codeActionsOnSave": {
 		"source.organizeImports": false,
-		"source.fixAll.tslint": true
+		"source.fixAll.tslint": true,
+		"source.fixAll.eslint": true
 	},
 }

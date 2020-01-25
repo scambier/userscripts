@@ -2,7 +2,7 @@
 // @name         Dowload Twitter Videos
 // @namespace    https://github.com/scambier/userscripts
 // @author       Simon Cambier
-// @version      0.5.4
+// @version      0.5.5
 // @description  Adds a download button to quickly fetch gifs and videos embedded in tweets
 // @license      ISC
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js
@@ -10,6 +10,7 @@
 // @include      https://tweetdeck.twitter.com/*
 // @include      http://twittervideodownloader.com/?url=*
 // @include      https://www.savetweetvid.com/?url=*
+// @include      https://twdown.net/?url=*
 // @grant        none
 // @run-at       document-end
 // ==/UserScript==
@@ -25,10 +26,10 @@
   }
 
   const externalDomains = [
-    // 'https://twdownload.com/?url=',
     'http://savetweetvid.com/?url=',
-
+    'https://twdown.net/?url=',
     'http://twittervideodownloader.com/?url=',
+    // 'https://twdownload.com/?url=',
     // 'https://twdownloader.net/?url='
   ]
 
@@ -264,6 +265,17 @@
     }
   }
 
+  function download_twdown(): void {
+    const url = getUrlQuery()
+    if (url) {
+      const form = document.querySelector('form[action="download.php"]') as HTMLElement
+      const input = form.querySelector('input[name="URL"]') as HTMLElement
+      const submit = form.querySelector('[type="submit"]') as HTMLElement
+      input.setAttribute('value', url)
+      submit.click()
+    }
+  }
+
   //#endregion External services
 
   //#region Utils
@@ -330,8 +342,10 @@
         break
 
       case 'twdownloader.net':
-          console.log('ok')
-          download_twdownloader()
+        download_twdownloader()
+        break
+      case 'twdown.net':
+        download_twdown()
         break
     }
   }
