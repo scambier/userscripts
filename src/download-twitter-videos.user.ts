@@ -2,7 +2,7 @@
 // @name         Dowload Twitter Videos
 // @namespace    https://github.com/scambier/userscripts
 // @author       Simon Cambier
-// @version      0.5.5
+// @version      0.5.6
 // @description  Adds a download button to quickly fetch gifs and videos embedded in tweets
 // @license      ISC
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js
@@ -104,6 +104,7 @@
       left: 7px;
       opacity: 0;
       transition: 0.2s;
+      z-index: 999;
     }
     .dtv-link img {
       border: none;
