@@ -6,7 +6,11 @@
 // @description  Show top 🔥👄 links of Hacker News
 // @license      ISC
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js
-// @include      https://news.ycombinator.com/*
+// @include      https://news.ycombinator.com/
+// @include      https://news.ycombinator.com/ask*
+// @include      https://news.ycombinator.com/news*
+// @include      https://news.ycombinator.com/show*
+// @include      https://news.ycombinator.com/front*
 // @grant        none
 // @run-at       document-end
 // ==/UserScript==
