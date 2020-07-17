@@ -3,11 +3,15 @@
 // @name         Hacker News - Most upvoted & most commented links
 // @namespace    https://github.com/scambier/userscripts
 // @author       Simon Cambier
-// @version      0.0.6
+// @version      0.0.7
 // @description  Show top 🔥👄 links of Hacker News
 // @license      ISC
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js
-// @include      https://news.ycombinator.com/*
+// @include      https://news.ycombinator.com/
+// @include      https://news.ycombinator.com/ask*
+// @include      https://news.ycombinator.com/news*
+// @include      https://news.ycombinator.com/show*
+// @include      https://news.ycombinator.com/front*
 // @grant        none
 // @run-at       document-end
 // ==/UserScript==
@@ -38,7 +42,7 @@
             id: $(tr).attr('id'),
             score: Number((_a = $(tr).next().find('.score')[0].textContent) === null || _a === void 0 ? void 0 : _a.split(' ')[0]),
             // Weirdly, .split(' ') does not work
-            comments: Number((_b = $(tr).next().find('a:contains("comments")').text().split('comments')[0].trim(), (_b !== null && _b !== void 0 ? _b : 0)))
+            comments: Number((_b = $(tr).next().find('a:contains("comments")').text().split('comments')[0].trim()) !== null && _b !== void 0 ? _b : 0)
         };
     });
     // Top 10% for new entries, top 20% for other pages

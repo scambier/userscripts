@@ -2,7 +2,7 @@
 // @name         Hacker News - Most upvoted & most commented links
 // @namespace    https://github.com/scambier/userscripts
 // @author       Simon Cambier
-// @version      0.0.6
+// @version      0.0.7
 // @description  Show top 🔥👄 links of Hacker News
 // @license      ISC
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js
