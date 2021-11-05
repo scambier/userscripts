@@ -55,11 +55,11 @@
   // Inject icons
   items.forEach(o => {
     if (getTop(items, 'comments', ratio).includes(o) && o.comments > 0) {
-      const link = $(`tr#${o.id}`).find('a.storylink')
+      const link = $(`tr#${o.id}`).find('a.titlelink')
       link.html('<span title="Most commented" data-userscript="scambier">👄 </span>' + link.html())
     }
     if (getTop(items, 'score', ratio).includes(o) && o.score > 0) {
-      const link = $(`tr#${o.id}`).find('a.storylink')
+      const link = $(`tr#${o.id}`).find('a.titlelink')
       link.html('<span title="Most upvoted" data-userscript="scambier">🔥 </span>' + link.html())
     }
 
