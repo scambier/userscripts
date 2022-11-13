@@ -5,7 +5,7 @@
 - [Greasyfork](https://greasyfork.org/en/scripts/382640-twitter-video-download)
 - [Openuserjs](https://openuserjs.org/scripts/scambier/Dowload_Twitter_Videos)
 
-Hover your mouse over the videos and gifs to show a download button in their corner.
+**Broken** - Hover your mouse over the videos and gifs to show a download button in their corner.
 
 ## [Hacker News](dist/hackernews.user.js)
 
