@@ -12,12 +12,6 @@
 // @grant        GM_setValue
 // ==/UserScript==
 
-declare const GM_config: {
-  init: (config: any) => void;
-  open: () => void;
-  get: (field: string) => string | boolean;
-};
-
 (function () {
   GM_config.init({
     id: "PCG_Config",
