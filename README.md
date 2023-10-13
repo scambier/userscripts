@@ -4,9 +4,9 @@ Those scripts may or may not be maintained.
 
 Your userscripts plugin should update them automatically, if installed through their url.
 
-## [Obsidian Omnisearch Injection in Kagi](https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-kagi.user.js)
+## Obsidian Omnisearch Injection in [Kagi](https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-kagi.user.js) and [Google](https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-google.user.js)
 
-Inject [Obsidian](https://obsidian.md) [Omnisearch](https://github.com/scambier/obsidian-omnisearch) results directly into Kagi.
+Inject [Obsidian](https://obsidian.md) [Omnisearch](https://github.com/scambier/obsidian-omnisearch) results directly into your search engine.
 
 ## [Hacker News](https://github.com/scambier/userscripts/raw/master/dist/hackernews.user.js)
 
