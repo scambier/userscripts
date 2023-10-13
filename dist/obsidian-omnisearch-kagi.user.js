@@ -7,7 +7,7 @@
 // @author       Simon Cambier
 // @match        https://kagi.com/*
 // @match        https://www.kagi.com/*
-// @icon         https://assets.kagi.com/v1/favicon-32x32.png
+// @icon         https://obsidian.md/favicon.ico
 // @require      https://code.jquery.com/jquery-3.7.1.min.js
 // @require      https://gist.githubusercontent.com/scambier/109932d45b7592d3decf24194008be4d/raw/9c97aa67ff9c5d56be34a55ad6c18a314e5eb548/waitForKeyElements.js
 // @require      https://raw.githubusercontent.com/sizzlemctwizzle/GM_config/master/gm_config.js
