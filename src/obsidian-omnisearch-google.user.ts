@@ -6,9 +6,8 @@
 // @author       Simon Cambier
 // @match        https://google.com/*
 // @match        https://www.google.com/*
-// @icon         https://www.google.com/favicon.ico
+// @icon         https://obsidian.md/favicon.ico
 // @require      https://code.jquery.com/jquery-3.7.1.min.js
-// @require      https://gist.githubusercontent.com/scambier/109932d45b7592d3decf24194008be4d/raw/9c97aa67ff9c5d56be34a55ad6c18a314e5eb548/waitForKeyElements.js
 // @require      https://raw.githubusercontent.com/sizzlemctwizzle/GM_config/master/gm_config.js
 // @grant        GM.xmlHttpRequest
 // @grant        GM_getValue
@@ -88,7 +87,7 @@
         // Delete all existing data-omnisearch
         resultsDiv.find("[data-omnisearch]").remove();
 
-        // Reverse the array because we will prepend them (bottom to top) on top of Kagi results
+        // Reverse the array because we will prepend them (bottom to top) on top of Google results
         data.reverse();
         for (const item of data) {
           const url = `obsidian://open?vault=${encodeURIComponent(
@@ -164,7 +163,6 @@
   let init = onInit(gmc);
   init.then(() => {
     injectConfigButton();
-    waitForKeyElements("#layout-v2", omnisearch);
     omnisearch(); // Make an initial call, just to avoid an improbable race condition
     console.log("Loaded Omnisearch injector");
   });
