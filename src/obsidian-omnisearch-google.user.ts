@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Obsidian Omnisearch in Google
 // @namespace    https://github.com/scambier/userscripts
-// @version      0.1
+// @version      0.2
 // @description  Injects Obsidian notes in Google search results
 // @author       Simon Cambier
 // @match        https://google.com/*
@@ -17,8 +17,11 @@
 // ==/UserScript==
 
 /* globals GM_config, jQuery, $, waitForKeyElements */
+
 (function () {
   "use strict";
+
+  const loadingSpanId = "OmnisearchObsidianLoading";
 
   // The `new GM_config()` syntax is not recognized by the TS compiler
   // @ts-ignore
@@ -72,6 +75,8 @@
 
     if (!query) return;
 
+    injectLoadingLabel();
+
     GM.xmlHttpRequest({
       method: "GET",
       url: `http://localhost:${port}/search?q=${query}`,
@@ -80,15 +85,17 @@
       },
       onload: function (res) {
         const data = JSON.parse(res.response);
+
+        removeLoadingLabel(data.length > 0);
+
         // Keep the x first results
         data.splice(nbResults);
-        const resultsDiv = $("#search>div");
+        const resultsDiv = $("#rhs");
 
         // Delete all existing data-omnisearch
         resultsDiv.find("[data-omnisearch]").remove();
 
         // Reverse the array because we will prepend them (bottom to top) on top of Google results
-        data.reverse();
         for (const item of data) {
           const url = `obsidian://open?vault=${encodeURIComponent(
             item.vault
@@ -139,7 +146,7 @@
         </div>        
         `);
 
-          resultsDiv.prepend(element);
+          resultsDiv.append(element);
         }
       },
     });
@@ -149,13 +156,30 @@
     const id = "OmnisearchObsidianConfig";
     if (!$("#" + id)[0]) {
       const btn = $(
-        `<a id=${id} class="feedback-link-btn" title="Settings" style="margin-left: 3em;" href="#">${logo}&nbspOmnisearch</a>`
+        `<div style="margin-bottom: 1em">
+          <span style="font-size: 18px">${logo}&nbspOmnisearch results</span>
+          <span style="font-size: 12px">(<a id=${id} class="feedback-link-btn" title="Settings" href="#">Settings</a>)</span>
+        </div>`
       );
-      console.log(btn)
-      $('#result-stats').append(btn);
+      $("#rhs").append(btn);
       $(document).on("click", "#" + id, function () {
         gmc.open();
       });
+    }
+  }
+
+  function injectLoadingLabel() {
+    if (!$("#" + loadingSpanId)[0]) {
+      const label = $(`<span id=${loadingSpanId}>Loading...</span>`);
+      $("#rhs").append(label);
+    }
+  }
+
+  function removeLoadingLabel(foundResults = true) {
+    if (foundResults) {
+      $("#" + loadingSpanId).remove();
+    } else {
+      $("#" + loadingSpanId).text("No results found");
     }
   }
 
