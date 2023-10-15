@@ -95,7 +95,7 @@
         // Delete all existing data-omnisearch
         resultsDiv.find("[data-omnisearch]").remove();
 
-        // Reverse the array because we will prepend them (bottom to top) on top of Google results
+        // Inject results
         for (const item of data) {
           const url = `obsidian://open?vault=${encodeURIComponent(
             item.vault
