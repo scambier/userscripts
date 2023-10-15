@@ -2,7 +2,9 @@
 // ==UserScript==
 // @name         Obsidian Omnisearch in Google
 // @namespace    https://github.com/scambier/userscripts
-// @version      0.3.1
+// @downloadURL  https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-google.user.js
+// @updateURL    https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-google.user.js
+// @version      0.3.2
 // @description  Injects Obsidian notes in Google search results
 // @author       Simon Cambier
 // @match        https://google.com/*
@@ -91,7 +93,7 @@
                     const url = `obsidian://open?vault=${encodeURIComponent(item.vault)}&file=${encodeURIComponent(item.path)}`;
                     const element = $(`
           <div class="MjjYud" data-omnisearch-result>
-          <div class="g Ww4FFb vt6azd tF2Cxc asEBEc" style="width: 600px">
+          <div class="g Ww4FFb vt6azd tF2Cxc asEBEc" style="width: 100%">
             <div class="N54PNb BToiNc cvP2Ce">
               <div class="kb0PBd cvP2Ce jGGQ5e">
                 <div class="yuRUbf">
@@ -125,6 +127,7 @@
               <div class="kb0PBd cvP2Ce">
                 <div
                   class="VwiC3b yXK7lf lyLwlc yDYNvb W8l4ac lEBKkf"
+                  style="-webkit-line-clamp: 3"
                 >
                   <span> ${item.excerpt
                         .replaceAll("<br />", " ")
