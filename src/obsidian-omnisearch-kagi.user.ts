@@ -1,6 +1,8 @@
 // ==UserScript==
 // @name         Obsidian Omnisearch in Kagi
 // @namespace    https://github.com/scambier/userscripts
+// @downloadURL  https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-kagi.user.js
+// @updateURL    https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-kagi.user.js
 // @version      0.3
 // @description  Injects Obsidian notes in Kagi search results
 // @author       Simon Cambier
