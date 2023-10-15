@@ -2,7 +2,7 @@
 // ==UserScript==
 // @name         Obsidian Omnisearch in Google
 // @namespace    https://github.com/scambier/userscripts
-// @version      0.2
+// @version      0.3
 // @description  Injects Obsidian notes in Google search results
 // @author       Simon Cambier
 // @match        https://google.com/*
@@ -10,6 +10,7 @@
 // @icon         https://obsidian.md/favicon.ico
 // @require      https://code.jquery.com/jquery-3.7.1.min.js
 // @require      https://raw.githubusercontent.com/sizzlemctwizzle/GM_config/master/gm_config.js
+// @require      https://gist.githubusercontent.com/scambier/109932d45b7592d3decf24194008be4d/raw/9c97aa67ff9c5d56be34a55ad6c18a314e5eb548/waitForKeyElements.js
 // @grant        GM.xmlHttpRequest
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -19,6 +20,11 @@
 /* globals GM_config, jQuery, $, waitForKeyElements */
 (function () {
     "use strict";
+    // Google's right "sidebar" that will contain the results div
+    const sidebarSelector = "#rhs";
+    // The results div
+    const resultsDivId = "OmnisearchObsidianResults";
+    // The "loading"/"no results" label
     const loadingSpanId = "OmnisearchObsidianLoading";
     // The `new GM_config()` syntax is not recognized by the TS compiler
     // @ts-ignore
@@ -77,14 +83,14 @@
                 removeLoadingLabel(data.length > 0);
                 // Keep the x first results
                 data.splice(nbResults);
-                const resultsDiv = $("#rhs");
-                // Delete all existing data-omnisearch
-                resultsDiv.find("[data-omnisearch]").remove();
+                const resultsDiv = $(`#${resultsDivId}`);
+                // Delete all existing data-omnisearch-result
+                $("[data-omnisearch-result]").remove();
                 // Inject results
                 for (const item of data) {
                     const url = `obsidian://open?vault=${encodeURIComponent(item.vault)}&file=${encodeURIComponent(item.path)}`;
                     const element = $(`
-          <div class="MjjYud" data-omnisearch>
+          <div class="MjjYud" data-omnisearch-result>
           <div class="g Ww4FFb vt6azd tF2Cxc asEBEc" style="width: 600px">
             <div class="N54PNb BToiNc cvP2Ce">
               <div class="kb0PBd cvP2Ce jGGQ5e">
@@ -133,23 +139,27 @@
             },
         });
     }
-    function injectConfigButton() {
+    function injectTitle() {
         const id = "OmnisearchObsidianConfig";
         if (!$("#" + id)[0]) {
             const btn = $(`<div style="margin-bottom: 1em">
           <span style="font-size: 18px">${logo}&nbspOmnisearch results</span>
           <span style="font-size: 12px">(<a id=${id} class="feedback-link-btn" title="Settings" href="#">Settings</a>)</span>
         </div>`);
-            $("#rhs").append(btn);
+            $(`#${resultsDivId}`).append(btn);
             $(document).on("click", "#" + id, function () {
                 gmc.open();
             });
         }
     }
+    function injectResultsContainer() {
+        const resultsDiv = $(`<div id="${resultsDivId}"></div>`);
+        $(sidebarSelector).prepend(resultsDiv);
+    }
     function injectLoadingLabel() {
         if (!$("#" + loadingSpanId)[0]) {
             const label = $(`<span id=${loadingSpanId}>Loading...</span>`);
-            $("#rhs").append(label);
+            $(`#${resultsDivId}`).append(label);
         }
     }
     function removeLoadingLabel(foundResults = true) {
@@ -163,8 +173,17 @@
     console.log("Loading Omnisearch injector");
     let init = onInit(gmc);
     init.then(() => {
-        injectConfigButton();
+        // Make sure the results container is there
+        if (!$(sidebarSelector)[0]) {
+            $("#rcnt").append('<div id="rhs"></div>');
+        }
+        injectResultsContainer();
+        injectTitle();
         omnisearch(); // Make an initial call, just to avoid an improbable race condition
         console.log("Loaded Omnisearch injector");
+        // Keep the results on top
+        waitForKeyElements(sidebarSelector, () => {
+            $(resultsDivId).prependTo(sidebarSelector);
+        });
     });
 })();
