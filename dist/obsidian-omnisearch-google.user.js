@@ -2,7 +2,7 @@
 // ==UserScript==
 // @name         Obsidian Omnisearch in Google
 // @namespace    https://github.com/scambier/userscripts
-// @version      0.3
+// @version      0.3.1
 // @description  Injects Obsidian notes in Google search results
 // @author       Simon Cambier
 // @match        https://google.com/*
@@ -125,9 +125,10 @@
               <div class="kb0PBd cvP2Ce">
                 <div
                   class="VwiC3b yXK7lf lyLwlc yDYNvb W8l4ac lEBKkf"
-                  style="-webkit-line-clamp: 2"
                 >
-                  <span> ${item.excerpt.replaceAll("<br />", " ")} </span>
+                  <span> ${item.excerpt
+                        .replaceAll("<br />", " ")
+                        .replaceAll("<br>", " ")} </span>
                 </div>
               </div>
             </div>
