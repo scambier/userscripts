@@ -3,7 +3,7 @@
 // @namespace    https://github.com/scambier/userscripts
 // @downloadURL  https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-kagi.user.js
 // @updateURL    https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-kagi.user.js
-// @version      0.3
+// @version      0.3.1
 // @description  Injects Obsidian notes in Kagi search results
 // @author       Simon Cambier
 // @match        https://kagi.com/*
@@ -23,8 +23,14 @@
 (function () {
   "use strict";
 
+  // The right sidebar that will contain the results div
+  const sidebarSelector = ".right-content-box";
+
+  // The results div
+  const resultsDivId = "OmnisearchObsidianResults";
+
+  // The "loading"/"no results" label
   const loadingSpanId = "OmnisearchObsidianLoading";
-  const containerSelector = "._0_right_sidebar";
 
   // The `new GM_config()` syntax is not recognized by the TS compiler
   // @ts-ignore
@@ -92,10 +98,10 @@
 
         // Keep the x first results
         data.splice(nbResults);
-        const container = $(containerSelector).first();
+        const resultsDiv = $(`#${resultsDivId}`);
 
         // Delete all existing data-omnisearch
-        container.find("[data-omnisearch]").remove();
+        $("[data-omnisearch-result]").remove();
 
         // Inject results
         for (const item of data) {
@@ -103,7 +109,7 @@
             item.vault
           )}&file=${encodeURIComponent(item.path)}`;
           const element = $(`
-        <div class="_0_SRI search-result" data-highlight="" data-omnisearch>
+        <div class="_0_SRI search-result" data-highlight="" data-omnisearch-result>
             <div class="_0_TITLE __sri-title">
                 <h3 class="__sri-title-box">
                     <a class="__sri_title_link _0_sri_title_link _0_URL"
@@ -132,13 +138,19 @@
             </div>
         </div>`);
 
-          container.append(element);
+          resultsDiv.append(element);
         }
       },
     });
   }
 
-  function injectConfigButton() {
+  function injectResultsContainer() {
+    $(`#${resultsDivId}`).remove()
+    const resultsDiv = $(`<div id="${resultsDivId}"></div>`);
+    $(sidebarSelector).prepend(resultsDiv);
+  }
+
+  function injectTitle() {
     const id = "OmnisearchObsidianConfig";
     if (!$("#" + id)[0]) {
       const btn = $(
@@ -149,7 +161,7 @@
           </span>
         </div>`
       );
-      $(containerSelector).first().append(btn);
+      $(`#${resultsDivId}`).append(btn);
       $(document).on("click", "#" + id, function () {
         gmc.open();
       });
@@ -159,7 +171,7 @@
   function injectLoadingLabel() {
     if (!$("#" + loadingSpanId)[0]) {
       const label = $(`<span id=${loadingSpanId}>Loading...</span>`);
-      $(containerSelector).first().append(label);
+      $(`#${resultsDivId}`).append(label);
     }
   }
 
@@ -167,14 +179,17 @@
     if (foundResults) {
       $("#" + loadingSpanId).remove();
     } else {
-      $("#" + loadingSpanId).text("No results found");
+      $("#" + loadingSpanId).text("No result found");
     }
   }
 
   console.log("Loading Omnisearch injector");
   let init = onInit(gmc);
   init.then(() => {
-    injectConfigButton();
+
+    injectResultsContainer();
+    injectTitle();
+
     waitForKeyElements("#layout-v2", omnisearch);
     omnisearch(); // Make an initial call, just to avoid an improbable race condition
     console.log("Loaded Omnisearch injector");
