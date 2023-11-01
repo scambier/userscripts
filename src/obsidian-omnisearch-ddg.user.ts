@@ -1,16 +1,17 @@
 // ==UserScript==
-// @name         Obsidian Omnisearch in Kagi
+// @name         Obsidian Omnisearch in DuckDuckGo
 // @namespace    https://github.com/scambier/userscripts
-// @downloadURL  https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-kagi.user.js
-// @updateURL    https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-kagi.user.js
-// @version      0.3.2
-// @description  Injects Obsidian notes in Kagi search results
+// @downloadURL  https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-ddg.user.js
+// @updateURL    https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-ddg.user.js
+// @version      0.1.0
+// @description  Injects Obsidian notes in DuckDuckGo search results
 // @author       Simon Cambier
-// @match        https://kagi.com/*
-// @match        https://www.kagi.com/*
+// @match        https://duckduckgo.com/*
+// @match        https://www.duckduckgo.com/*
 // @icon         https://obsidian.md/favicon.ico
 // @require      https://code.jquery.com/jquery-3.7.1.min.js
 // @require      https://gist.githubusercontent.com/scambier/109932d45b7592d3decf24194008be4d/raw/9c97aa67ff9c5d56be34a55ad6c18a314e5eb548/waitForKeyElements.js
+// @require      https://cdn.jsdelivr.net/npm/vue@3
 // @require      https://raw.githubusercontent.com/sizzlemctwizzle/GM_config/master/gm_config.js
 // @grant        GM.xmlHttpRequest
 // @grant        GM_getValue
@@ -24,7 +25,7 @@
   "use strict";
 
   // The right sidebar that will contain the results div
-  const sidebarSelector = ".right-content-box";
+  const sidebarSelector = '[data-area="sidebar"]';
 
   // The results div
   const resultsDivId = "OmnisearchObsidianResults";
@@ -35,8 +36,8 @@
   // The `new GM_config()` syntax is not recognized by the TS compiler
   // @ts-ignore
   const gmc = new GM_config({
-    id: "ObsidianOmnisearchKagi",
-    title: "Omnisearch in Kagi - Configuration",
+    id: "ObsidianOmnisearchDdg",
+    title: "Omnisearch in DuckDuckGo - Configuration",
     fields: {
       port: {
         label: "HTTP Port",
@@ -109,10 +110,21 @@
             item.vault
           )}&file=${encodeURIComponent(item.path)}`;
           const element = $(`
-        <div class="_0_SRI search-result" data-highlight="" data-omnisearch-result>
-            <div class="_0_TITLE __sri-title">
-                <h3 class="__sri-title-box">
-                    <a class="__sri_title_link _0_sri_title_link _0_URL"
+        <div data-omnisearch-result style="margin-bottom: 2rem;">
+
+            <div>
+                <a href="${url}" rel="noopener noreferrer" tabindex="-1" aria-hidden="true">
+                    <div>
+                        <span>${logo}Obsidian</span>&nbsp;<span>› ${
+            item.path
+          }</span>
+                    </div>
+                </a>
+            </div>
+
+            <div>
+                <h2 style="font-size: var(--font-size-result-title-main); padding: 0;">
+                    <a
                     title="${item.basename}"
                     href="${url}" rel="noopener noreferrer">
                         ${item.basename}
@@ -120,17 +132,8 @@
                 </h3>
             </div>
 
-            <div class="__sri-url-box">
-                <a class="_0_URL __sri-url" href="${url}" rel="noopener noreferrer" tabindex="-1" aria-hidden="true">
-                    <div class="__sri_url_path_box">
-                        <span class="host">${logo}Obsidian</span>&nbsp;<span class="path">› ${
-            item.path
-          }</span>
-                    </div>
-                </a>
-            </div>
-            <div class="__sri-body">
-                <div class="_0_DESC __sri-desc">
+            <div>
+                <div>
                     <div>
                         ${item.excerpt.replaceAll("<br>", " ")}
                     </div>
@@ -146,7 +149,7 @@
         const span = $("#" + loadingSpanId)[0];
         if (span) {
           span.innerHTML = `Error: Obsidian is not running or the Omnisearch server is not enabled.
-          <br /><a href="Obsidian://open">Open Obsidian</a>.`;
+          <br /><a href="Obsidian://open" style="color: var(--theme-col-about-link);">Open Obsidian</a>.`;
         }
       },
     });
@@ -155,7 +158,7 @@
   function injectResultsContainer() {
     $(`#${resultsDivId}`).remove();
     const resultsDiv = $(
-      `<div id="${resultsDivId}" style="margin-bottom: 2em;"></div>`
+      `<div id="${resultsDivId}" style="color: var(--theme-col-txt-snippet); margin-bottom: 2em;"></div>`
     );
     $(sidebarSelector).prepend(resultsDiv);
   }

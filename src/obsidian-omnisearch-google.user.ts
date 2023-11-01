@@ -3,7 +3,7 @@
 // @namespace    https://github.com/scambier/userscripts
 // @downloadURL  https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-google.user.js
 // @updateURL    https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-google.user.js
-// @version      0.3.2
+// @version      0.3.3
 // @description  Injects Obsidian notes in Google search results
 // @author       Simon Cambier
 // @match        https://google.com/*
@@ -161,6 +161,14 @@
           resultsDiv.append(element);
         }
       },
+      onerror: function (res) {
+        console.log("Omnisearch error", res);
+        const span = $("#" + loadingSpanId)[0];
+        if (span) {
+          span.innerHTML = `Error: Obsidian is not running or the Omnisearch server is not enabled.
+          <br /><a href="Obsidian://open">Open Obsidian</a>.`;
+        }
+      },
     });
   }
 
@@ -170,7 +178,7 @@
       const btn = $(
         `<div style="margin-bottom: 1em">
           <span style="font-size: 18px">${logo}&nbspOmnisearch results</span>
-          <span style="font-size: 12px">(<a id=${id} class="feedback-link-btn" title="Settings" href="#">Settings</a>)</span>
+          <span style="font-size: 12px">(<a id=${id} class="feedback-link-btn" title="Settings" href="#">settings</a>)</span>
         </div>`
       );
       $(`#${resultsDivId}`).append(btn);
@@ -181,7 +189,9 @@
   }
 
   function injectResultsContainer() {
-    const resultsDiv = $(`<div id="${resultsDivId}"></div>`);
+    const resultsDiv = $(
+      `<div id="${resultsDivId}" style="margin-bottom: 2em;"></div>`
+    );
     $(sidebarSelector).prepend(resultsDiv);
   }
 
