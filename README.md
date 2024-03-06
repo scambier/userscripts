@@ -4,15 +4,23 @@ Those scripts may or may not be maintained.
 
 Your userscripts plugin should update them automatically, if installed through their url.
 
-## Obsidian Omnisearch Injection in [Kagi](https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-kagi.user.js) and [Google](https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-google.user.js)
+## Obsidian Omnisearch results injection in your favorite web search engine
 
-Inject [Obsidian](https://obsidian.md) [Omnisearch](https://github.com/scambier/obsidian-omnisearch) results directly into your search engine.
+- [Install for Kagi](https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-kagi.user.js)
+- [Install for DuckDuckGo](https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-ddg.user.js)
+- [Install for Google](https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-google.user.js)
 
-## [Hacker News](https://github.com/scambier/userscripts/raw/master/dist/hackernews.user.js)
+Inject Obsidian Omnisearch results directly into your search engine. [More information](https://publish.obsidian.md/omnisearch/Inject+Omnisearch+results+into+your+search+engine)
+
+## Hacker News
+
+[Install](https://github.com/scambier/userscripts/raw/master/dist/hackernews.user.js)
 
 Adds emojis to show most upvoted 🔥 and most commented 👄 links of Hacker News.
 
-## [Better PCGamer](https://github.com/scambier/userscripts/raw/master/dist/better-pcgamer.user.js)
+## Better PCGamer
+
+[Install](https://github.com/scambier/userscripts/raw/master/dist/better-pcgamer.user.js)
 
 Enhance your reading experience of PCGamer articles. Removes the useless sidebar, interstitial unrelated videos, and Disqus comments.
 
