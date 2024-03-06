@@ -3,7 +3,7 @@
 // @namespace    https://github.com/scambier/userscripts
 // @downloadURL  https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-google.user.js
 // @updateURL    https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-google.user.js
-// @version      0.3.3
+// @version      0.3.4
 // @description  Injects Obsidian notes in Google search results
 // @author       Simon Cambier
 // @match        https://google.com/*
@@ -118,23 +118,24 @@
                 <div class="yuRUbf">
                   <div>
                     <span>
-                      <a href="${url}"
-                        ><br />
+                      <a href="${url}"><br />
                         <h3 class="LC20lb MBeuO DKV0Md">${item.basename}</h3>
                         <div class="notranslate TbwUpd NJjxre iUh30 ojE3Fb">
-                          <span class="H9lube">
-                            <div class="eqA2re NjwKYd Vwoesf" aria-hidden="true">
-                              ${logo}
-                            </div>
-                          </span>
-                          <div>
-                            <span class="VuuXrf">Obsidian</span>
-                            <div class="byrV5b">
-                              <cite class="qLRx3b tjvcx GvPZzd cHaqb" role="text">
-                                <span class="dyjrff ob9lvb" role="text">
-                                  ${item.path}
-                                </span>
-                              </cite>
+                          <div class="q0vns">
+                            <span class="H9lube">
+                              <div class="eqA2re NjwKYd Vwoesf" aria-hidden="true">
+                                ${logo}
+                              </div>
+                            </span>
+                            <div>
+                              <span class="VuuXrf">Obsidian</span>
+                              <div class="byrV5b">
+                                <cite class="qLRx3b tjvcx GvPZzd cHaqb" role="text">
+                                  <span class="dyjrff ob9lvb" role="text">
+                                    ${item.path}
+                                  </span>
+                                </cite>
+                              </div>
                             </div>
                           </div>
                         </div>
