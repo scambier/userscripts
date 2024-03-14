@@ -9,6 +9,8 @@ Your userscripts plugin should update them automatically, if installed through t
 - [Install for Kagi](https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-kagi.user.js)
 - [Install for DuckDuckGo](https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-ddg.user.js)
 - [Install for Google](https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-google.user.js)
+- [Install for Bing](https://github.com/scambier/userscripts/raw/master/dist/obsidian-omnisearch-bing.user.js)
+
 
 Inject Obsidian Omnisearch results directly into your search engine. [More information](https://publish.obsidian.md/omnisearch/Inject+Omnisearch+results+into+your+search+engine)
 
