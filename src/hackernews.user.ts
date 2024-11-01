@@ -2,8 +2,10 @@
 // ==UserScript==
 // @name         Hacker News - Most upvoted & most commented links
 // @namespace    https://github.com/scambier/userscripts
+// @downloadURL  https://github.com/scambier/userscripts/raw/refs/heads/master/dist/hackernews.user.js
+// @updateURL    https://github.com/scambier/userscripts/raw/refs/heads/master/dist/hackernews.user.js
 // @author       Simon Cambier
-// @version      0.0.9
+// @version      0.0.10
 // @description  Show top 🔥👄 links of Hacker News
 // @license      ISC
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js
@@ -60,7 +62,7 @@
     }
     if (getTop(items, "score", ratio).includes(o) && o.score > 0) {
       title.before(
-        '<span title="Most commented" data-userscript="scambier">🔥 </span>'
+        '<span title="Most upvoted" data-userscript="scambier">🔥 </span>'
       );
     }
   });
